@@ -1,0 +1,43 @@
+<?page title="Formulario" contentType="text/html;charset=UTF-8"?>
+<zk>
+		<!-- RECOGER INFO ENVIADA DESDE INDEX.ZUL
+		<label id="labelNombre"/>
+		<separator/> -->
+		
+		<grid apply="com.springzk.pruebazk.controller.FormController">
+			<columns>
+                <column width="15%">Tipo</column>
+                <column width="30%">Contenido</column>
+                <column width="15%">Tipo</column>
+                <column width="30%">Contenido</column>
+                <column width="15%">Tipo</column>
+                <column width="30%">Contenido</column>
+                <column width="20%">Tipo</column>
+                <column width="30%"> Contenido</column>
+            </columns>
+            
+			<rows>
+				<row> 
+				Seg.Social: <longbox id="seguridadsocialLongbox" width="100%"/>
+				DNI: <textbox id="dniTextbox" width="100%"/>
+				Nombre: <textbox id="nombreTextbox" width="100%"/>
+				Apellidos: <textbox id="apellidosTextbox" width="100%"/>
+				</row>
+				<row> 
+				Provincia: <textbox id="provinciaTextbox" width="100%"/>
+				Calle: <textbox id="calleTextbox" width="100%"/>
+				Número: <intbox id="numeroIntbox" format="0" width="100%"/>
+				Cód. Postal: <intbox id="codigopostalIntbox" format="0" width="100%"/>
+				</row>
+				<row> 
+				IBAN: <textbox id="ibanTextbox" width="100%"/>
+				Entidad: <textbox id="entidadTextbox" width="100%"/>
+				Cuantía: <doublebox id="cuantiaDoublebox" format="#,###.##" width="100%"/>
+				Atraso: <doublebox id="atrasoDoublebox" format="#,###.##" width="100%"/>
+				</row>
+			</rows>
+		</grid>
+		<button iconSclass="z-icon-edit" id="insertarButton" label="Insertar"/>
+		<button iconSclass="z-icon-step-backward" label="Volver" href="/"/>
+	
+</zk>

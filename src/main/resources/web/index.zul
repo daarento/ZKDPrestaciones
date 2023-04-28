@@ -1,0 +1,160 @@
+<?page title="Principal" contentType="text/html;charset=UTF-8"?>
+<zk>
+<style>
+	.sin-borde {
+      	border: none !important;
+    }
+</style>
+<window border="none"
+	apply="com.springzk.pruebazk.controller.IndexController">
+	
+	<grid align="center" sclass="sin-borde" apply="com.springzk.pruebazk.controller.FilesController">
+		<rows>
+			<row>
+				<textbox id="buscador" hflex="1"/>
+				<button id="searchButton" label="Buscar"/>
+				<button id="uploadCsvButton" label="Subir fichero CSV" hflex="1"/>
+				<button id="downXmlButton" label="Descargar XML" hflex="1"/>
+			</row>
+		</rows>
+	</grid>
+
+	<listbox id="prestListbox" emptyMessage="No se ha encontrado nigún registro" rows="5">
+		<listhead>
+			<listheader label="Seguridad Social" sort="auto" width="8%"/>
+			<listheader label="DNI" sort="auto" width="6%"/>
+			<listheader label="Nombre" sort="auto" width="6%"/>
+			<listheader label="Apellidos" sort="auto" width="12%"/>
+			<listheader label="Provincia" sort="auto" width="6%"/>
+			<listheader label="Calle" sort="auto" width="11%"/>
+			<listheader label="Número" sort="auto" width="5%"/>
+			<listheader label="Código Postal" sort="auto" width="7%"/>
+			<listheader label="IBAN" sort="auto" width="13%"/>
+			<listheader label="Entidad" sort="auto" width="6%"/>
+			<listheader label="Cuantía" sort="auto" width="5%"/>
+			<listheader label="Atraso" sort="auto" width="5%"/>
+			<listheader label="Activo" sort="auto" width="4%"/>
+			<listheader label="Acciones"/>
+		</listhead>
+		<template name="model">
+			<listitem>
+				<listcell label="${each.seguridadsocial}"></listcell>
+				<listcell label="${each.dni}"></listcell>
+				<listcell label="${each.nombre}"></listcell>
+				<listcell label="${each.apellidos}"></listcell>
+				<listcell label="${each.provincia}"></listcell>
+				<listcell label="${each.calle}"></listcell>
+				<listcell label="${each.numero}"></listcell>
+				<listcell label="${each.codigopostal}"></listcell>
+				<listcell label="${each.iban}"></listcell>
+				<listcell label="${each.entidad}"></listcell>
+				<listcell label="${each.cuantia}"></listcell>
+				<listcell label="${each.atraso}"></listcell>
+				<listcell><checkbox forward="onClick=prestListbox.onDeleteItem(${each.dni})" mold="switch" checked="${each.inactivo? 'false': 'true'}"/></listcell>		
+				<listcell>
+					<button iconSclass="z-icon-edit" forward="onClick=prestListbox.onShowItem(${each.dni})"/>
+                </listcell>
+			</listitem>
+		</template>
+	</listbox>
+	
+	<grid style="text-align:center" id="totalesBox">
+		<rows>
+			<row>
+				Totales cuantía (activos): <label id="tCuantiaActivo" style="font-weight:bold"> €</label>
+				Totales atraso (activos): <label id="tAtrasoActivo" style="font-weight:bold"> €</label>
+			</row>
+			<row>
+				Totales cuantía: <label id="tCuantia" style="font-weight:bold"> €</label>
+				Totales atraso: <label id="tAtraso" style="font-weight:bold"> €</label>
+			</row>
+		</rows>
+	</grid>
+	
+	<separator/>
+	
+	<grid sclass="sin-borde" style="text-align:center" id="detallesBox">
+		
+		<columns>
+                <column width="15%">Tipo</column>
+                <column width="30%">Contenido</column>
+                <column width="15%">Tipo</column>
+                <column width="30%">Contenido</column>
+                <column width="15%">Tipo</column>
+                <column width="30%">Contenido</column>
+                <column width="20%">Tipo</column>
+                <column width="30%">Contenido</column>
+        </columns>
+		
+		<rows>
+			<row>
+				Seg. Social <longbox id="seguridadsocialLabel" style="font-weight:bold; align:end" width="100%"/>
+				
+				DNI<textbox id="dniLabel" style="font-weight:bold; align:end" width="100%" disabled="true"/>
+				
+				Nombre <textbox id="nombreLabel" style="font-weight:bold" width="100%"/>
+				
+				Apellidos <textbox id="apellidosLabel" style="font-weight:bold" width="100%"/>
+				
+			</row>
+			<row>
+				Provincia <textbox id="provinciaLabel" style="font-weight:bold" width="100%"/>
+				
+				Calle <textbox id="calleLabel" style="font-weight:bold" width="100%"/>
+				
+				Número <intbox id="numeroLabel" style="font-weight:bold" width="100%"/>
+				
+				Cód. Postal <intbox id="codigopostalLabel" style="font-weight:bold" width="100%"/>
+				
+			</row>
+			<row>
+				IBAN <textbox id="ibanLabel" style="font-weight:bold" width="100%"/>
+				
+				Entidad <textbox id="entidadLabel" style="font-weight:bold" width="100%"/>
+				
+				Cuantía <doublebox id="cuantiaLabel" style="font-weight:bold" width="100%" format="0.00"/>
+				
+				Atraso <doublebox id="atrasoLabel" style="font-weight:bold" width="100%" format="0.00"/>
+				
+			</row>
+		</rows>
+		
+	</grid>
+	
+	<grid sclass="sin-borde" align="center" id="editButtons">
+		<rows>
+			<row>
+				<button id="updateButton" label="Actualizar"/>
+				<button id="cerrarButton" label="Cerrar"/>
+			</row>
+		</rows>
+	</grid>
+	
+	<separator/>
+	
+	<listbox id="historialListbox" rows="3" emptyMessage="No car found in the result">
+	    <listhead>
+	        <listheader label="Fecha" />
+	        <listheader label="Acción" />
+	        <listheader label="Valor Anterior"/>
+	    </listhead>
+	    <template name="model">
+	        <listitem>
+	            <listcell label="${each.fecha}"/>
+	            <listcell label="${each.accion}"/>
+	            <listcell label="${each.valoranterior}"/>
+	        </listitem>
+	    </template>
+	</listbox>
+	
+	<button id="cerrarHistorialButton" label="Cerrar"/>
+	
+	<separator/>
+	
+	<button iconSclass="z-icon-pencil" hflex="1" label="Insertar registro" href="/formulario"/>
+	
+	<!-- BUTTON PARA ENVIAR INFORMACIÓN A FORMULARIO.ZUL (GET Y POST)
+	<button iconSclass="z-icon-pencil" hflex="1" label="Prueba" id="enviarInfo"/> -->
+	
+</window>
+</zk>

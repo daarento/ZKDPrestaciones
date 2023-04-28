@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+  <library-property>
+    <name>org.zkoss.zul.theme.preferred</name>
+    <value>default</value>
+  </library-property>
+  <library-property>
+    <name>org.zkoss.zul.nativebar</name>
+    <value>true</value>
+  </library-property>
+  <zul-view-resolver>
+    <suffix>.zul</suffix>
+    <view-uri>/web/</view-uri>
+  </zul-view-resolver>
+</zk>
