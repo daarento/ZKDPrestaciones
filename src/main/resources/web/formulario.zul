@@ -13,7 +13,7 @@
                 <column width="15%">Tipo</column>
                 <column width="30%">Contenido</column>
                 <column width="20%">Tipo</column>
-                <column width="30%"> Contenido</column>
+                <column width="30%">Contenido</column>
             </columns>
             
 			<rows>
@@ -24,14 +24,19 @@
 				Apellidos: <textbox id="apellidosTextbox" width="100%"/>
 				</row>
 				<row> 
-				Provincia: <textbox id="provinciaTextbox" width="100%"/>
+				Provincia: 
+				<combobox id="provinciaCombo">
+					<template name="model">
+						<comboitem label="${each.nombre}"/>
+					</template>
+				</combobox>
 				Calle: <textbox id="calleTextbox" width="100%"/>
 				Número: <intbox id="numeroIntbox" format="0" width="100%"/>
 				Cód. Postal: <intbox id="codigopostalIntbox" format="0" width="100%"/>
 				</row>
 				<row> 
 				IBAN: <textbox id="ibanTextbox" width="100%"/>
-				Entidad: <textbox id="entidadTextbox" width="100%"/>
+				Entidad <textbox id="entidadTextbox" width="100%" readonly="true" instant="true"/>
 				Cuantía: <doublebox id="cuantiaDoublebox" format="#,###.##" width="100%"/>
 				Atraso: <doublebox id="atrasoDoublebox" format="#,###.##" width="100%"/>
 				</row>

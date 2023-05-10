@@ -18,6 +18,7 @@ import java.util.LinkedList;
 
 import java.text.DecimalFormat;
 
+import com.springzk.pruebazk.model.Entidad;
 import com.springzk.pruebazk.model.Historial;
 import com.springzk.pruebazk.dao.HistorialDAOImpl;
 import com.springzk.pruebazk.config.MiConexion;
@@ -33,6 +34,8 @@ public class PrestacionesDAOImpl implements PrestacionesDAO{
 	private List<Prestaciones> prestacionesList= new LinkedList<Prestaciones>();
 	private int id = 1;
 	
+	private EntidadDAO entidadDao;
+	
 	public PrestacionesDAOImpl() {
 		MiConexion conn = new MiConexion();
 		//con = conn.getConnection();
@@ -46,6 +49,8 @@ public class PrestacionesDAOImpl implements PrestacionesDAO{
 		prestacionesList.add(new Prestaciones(id++, "Marta", "Torralbo", 60));
 		prestacionesList.add(new Prestaciones(id++, "Braulio", "Arencibia", 60));
 		prestacionesList.add(new Prestaciones(id++, "Cronos", "Border Collie", 2));
+		
+		entidadDao = new EntidadDAOImpl();
 	}
 	
 	/*
@@ -60,7 +65,11 @@ public class PrestacionesDAOImpl implements PrestacionesDAO{
 		if(p.getSeguridadsocial() != 0) {
 			String sql = "INSERT INTO datos (seguridadsocial, dni, nombre, apellidos, provincia, calle, numero, codigopostal, iban, entidad, cuantia, atraso) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
-			return jdbcTemplate.update(sql, p.getSeguridadsocial(), p.getDni().toUpperCase(), p.getNombre().toUpperCase(), p.getApellidos().toUpperCase(), p.getProvincia().toUpperCase(), p.getCalle().toUpperCase(), p.getNumero(), p.getCodigopostal(), p.getIban().toUpperCase(), p.getEntidad().toUpperCase(), p.getCuantia(), p.getAtraso());
+			String codigo = p.getIban().substring(4, 8);
+			String entidad = entidadDao.mostrarEntidad(codigo).getNombre();
+			
+			
+			return jdbcTemplate.update(sql, p.getSeguridadsocial(), p.getDni().toUpperCase(), p.getNombre().toUpperCase(), p.getApellidos().toUpperCase(), p.getProvincia().toUpperCase(), p.getCalle().toUpperCase(), p.getNumero(), p.getCodigopostal(), p.getIban().toUpperCase(), entidad.toUpperCase(), p.getCuantia(), p.getAtraso());
 		
 		} else { //si solo contiene 3 cabeceras (dni, nombre y apellidos) insertar el registro en la base de datos como inactivo
 			String sql = "INSERT INTO datos (dni, nombre, apellidos, inactivo) VALUES (?,?,?,?)";
@@ -73,7 +82,13 @@ public class PrestacionesDAOImpl implements PrestacionesDAO{
 		// TODO Auto-generated method stub
 		String sql = "UPDATE datos SET seguridadsocial = ?, nombre = ?, apellidos = ?, provincia = ?, calle = ?, numero = ?, codigopostal = ?, iban = ?, entidad = ?, cuantia = ?, atraso = ? WHERE dni = ?";
 		
-		return jdbcTemplate.update(sql, p.getSeguridadsocial(), p.getNombre().toUpperCase(), p.getApellidos().toUpperCase(), p.getProvincia().toUpperCase(), p.getCalle().toUpperCase(), p.getNumero(), p.getCodigopostal(), p.getIban().toUpperCase(), p.getEntidad().toUpperCase(), p.getCuantia(), p.getAtraso(), p.getDni().toUpperCase());
+		String entidad = "";
+		if(p.getIban().length() != 0 && (!p.getIban().isEmpty())) {
+			String codigo = p.getIban().substring(4, 8);
+			entidad = entidadDao.mostrarEntidad(codigo).getNombre();	
+		}
+		
+		return jdbcTemplate.update(sql, p.getSeguridadsocial(), p.getNombre().toUpperCase(), p.getApellidos().toUpperCase(), p.getProvincia().toUpperCase(), p.getCalle().toUpperCase(), p.getNumero(), p.getCodigopostal(), p.getIban().toUpperCase(), entidad.toUpperCase(), p.getCuantia(), p.getAtraso(), p.getDni().toUpperCase());
 	}
 
 	@Override
@@ -290,6 +305,4 @@ public class PrestacionesDAOImpl implements PrestacionesDAO{
 		}
 		//
 	}
-
-	
 }

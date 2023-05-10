@@ -90,7 +90,7 @@
 			<row>
 				Seg. Social <longbox id="seguridadsocialLabel" style="font-weight:bold; align:end" width="100%"/>
 				
-				DNI<textbox id="dniLabel" style="font-weight:bold; align:end" width="100%" disabled="true"/>
+				DNI<textbox id="dniLabel" style="font-weight:bold; align:end" width="100%" readonly="true"/>
 				
 				Nombre <textbox id="nombreLabel" style="font-weight:bold" width="100%"/>
 				
@@ -98,7 +98,13 @@
 				
 			</row>
 			<row>
-				Provincia <textbox id="provinciaLabel" style="font-weight:bold" width="100%"/>
+				<!-- Provincia <textbox id="provinciaLabel" style="font-weight:bold" width="100%"/> -->
+				Provincia 
+				<combobox id="provinciaCombo">
+					<template name="model">
+						<comboitem label="${each.nombre}"/>
+					</template>
+				</combobox>
 				
 				Calle <textbox id="calleLabel" style="font-weight:bold" width="100%"/>
 				
@@ -108,9 +114,9 @@
 				
 			</row>
 			<row>
-				IBAN <textbox id="ibanLabel" style="font-weight:bold" width="100%"/>
+				IBAN <textbox id="ibanLabel" style="font-weight:bold" width="100%" instant="true"/>
 				
-				Entidad <textbox id="entidadLabel" style="font-weight:bold" width="100%"/>
+				Entidad <textbox id="entidadLabel" style="font-weight:bold" width="100%" readonly="true" instant="true"/>
 				
 				Cuantía <doublebox id="cuantiaLabel" style="font-weight:bold" width="100%" format="0.00"/>
 				

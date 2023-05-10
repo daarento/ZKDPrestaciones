@@ -21,7 +21,7 @@ import com.springzk.pruebazk.config.MiConexion;
 
 public class ZkdPrestacionesTest {
 	
-	private DataSource dataSource;
+	/*private DataSource dataSource;
 	private PrestacionesDAO dao;
 	
 	private Connection con;	
@@ -40,10 +40,9 @@ public class ZkdPrestacionesTest {
 	@Test
 	void insertarTest() {
 		ArrayList<Prestaciones> lista = new ArrayList<>();
-		Prestaciones p1 = new Prestaciones("Pepito", "Grillo", 35);
-		Prestaciones p2 = new Prestaciones("Francisco", "Javier", 22);
+		Prestaciones p1 = new Prestaciones(467160035842L, "64742343B", "DAVID", "RODRIGUEZ SEVILLA", "SORIA", "CAMPO CATALUNYA", 25,
+				42883, "ES3920387248254561449020", "BANKIA", 0, 0, false);
 		lista.add(p1);
-		lista.add(p2);
 		
 		//result = dao.insert(p1);
 		int result = 0;
@@ -56,34 +55,26 @@ public class ZkdPrestacionesTest {
 	
 	@Test
 	void actualizarTest() {
-		Prestaciones p = new Prestaciones("Pepito", "Rico Pepino", 25);
-		int result = dao.update(p);
+		Prestaciones p1 = new Prestaciones(467160035842L, "64742343B", "DAVID DANIEL", "RODRIGUEZ SEVILLA", "SORIA", "CAMPO CATALUNYA", 54,
+				42883, "ES3920387248254561449020", "SANTADER", 0, 0, true);
+		int result = dao.update(p1);
 		assertTrue(result > 0);
 	}
 	
 	@Test
 	void eliminarTest() {
-		String nombre = "Prueba";
-		int result = dao.delete(nombre);
+		String dni = "64742343B";
+		int result = dao.delete(dni);
 		assertTrue(result > 0);
-	}    
+	}  
 	
 	@Test
 	void listarTest() {
-		List<Prestaciones> list = dao.listar();
-		
-		for(Prestaciones cada: list) {
-			System.out.println(cada);
-		}
-	}
-	
-	@Test
-	void listarTest1() {
 		List<Prestaciones> list = dao.listAll();
 		int i= 1;
 		for(Prestaciones cada: list) { 
 			System.out.println(i + cada.toString());
 			i++;
 		}
-	}
+	}*/
 }

@@ -3,23 +3,18 @@ package com.springzk.pruebazk.controller;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Desktop;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.Page;
-import org.zkoss.zk.ui.annotation.Command;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zk.ui.util.Notification;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Doublebox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Intbox;
@@ -34,11 +29,15 @@ import org.zkoss.zul.ext.Selectable;
 import com.springzk.pruebazk.model.Prestaciones;
 import com.springzk.pruebazk.dao.PrestacionesDAO;
 import com.springzk.pruebazk.dao.PrestacionesDAOImpl;
-
 import com.springzk.pruebazk.model.Historial;
 import com.springzk.pruebazk.config.MiConexion;
+import com.springzk.pruebazk.dao.EntidadDAO;
+import com.springzk.pruebazk.dao.EntidadDAOImpl;
 import com.springzk.pruebazk.dao.HistorialDAO;
 import com.springzk.pruebazk.dao.HistorialDAOImpl;
+import com.springzk.pruebazk.model.Provincia;
+import com.springzk.pruebazk.dao.ProvinciaDAO;
+import com.springzk.pruebazk.dao.ProvinciaDAOImpl;
 
 
 public class IndexController extends SelectorComposer<Component>{
@@ -129,6 +128,9 @@ public class IndexController extends SelectorComposer<Component>{
 	@Wire
 	private Label tAtraso;
 	
+	@Wire
+	private Combobox provinciaCombo;
+	
 	private float totalCuantiaAct;
 	private float totalAtrasoAct;
 	private float totalCuantia;
@@ -140,9 +142,14 @@ public class IndexController extends SelectorComposer<Component>{
 	@Wire
 	private List<Historial> hist;
 	
+	@Wire
+	private List<Provincia> provinciaList;
+	
 	private Prestaciones seleccionado;
 	private PrestacionesDAO dao = new PrestacionesDAOImpl();
 	private HistorialDAO historialDao = new HistorialDAOImpl();
+	private EntidadDAO entidadDao = new EntidadDAOImpl();
+	private ProvinciaDAO provinciaDao = new ProvinciaDAOImpl();
 	
 	private String dniprestListbox;
 		
@@ -153,6 +160,9 @@ public class IndexController extends SelectorComposer<Component>{
 		//Mostrar lista al entrar en la aplicación web
 		result = dao.listAll();
 		prestListbox.setModel(new ListModelList<Prestaciones>(result));
+		
+		provinciaList = provinciaDao.listProvincia();
+		provinciaCombo.setModel(new ListModelList<Provincia>(provinciaList));
 		
 		detallesBox.setVisible(false);
 		updateButton.setVisible(false);
@@ -269,26 +279,67 @@ public class IndexController extends SelectorComposer<Component>{
 				seleccionado.setDni(dniLabel.getValue());
 				seleccionado.setNombre(nombreLabel.getValue().toUpperCase());
 				seleccionado.setApellidos(apellidosLabel.getValue().toUpperCase());
-				seleccionado.setProvincia(provinciaLabel.getValue().toUpperCase());
+				seleccionado.setProvincia(provinciaCombo.getValue().toUpperCase());
 				seleccionado.setCalle(calleLabel.getValue().toUpperCase());				
 				seleccionado.setNumero(numeroLabel.getValue());
 				seleccionado.setCodigopostal(codigopostalLabel.getValue());
 				seleccionado.setIban(ibanLabel.getValue().toUpperCase());
-				seleccionado.setEntidad(entidadLabel.getValue().toUpperCase());
+				//seleccionado.setEntidad(entidadLabel.getValue().toUpperCase());
 				seleccionado.setCuantia((float) cuantiaLabel.doubleValue());
 				seleccionado.setAtraso((float) atrasoLabel.doubleValue());
 				//seleccionado.setInactivo(inactivoSwitch.getValue());
 				
 				Long seguridadsocial = seguridadsocialLabel.getValue();
+				if(seguridadsocial == null) {
+					seguridadsocial = 0L;
+				}
 				String dni = dniLabel.getValue();
+				if(dni == null) {
+					dni = "";
+				}
 				String nombre = nombreLabel.getValue();
+				if(nombre == null) {
+					nombre = "";
+				}
 				String apellidos = apellidosLabel.getValue();
-				String provincia = provinciaLabel.getValue();
+				if(apellidos == null) {
+					apellidos = "";
+				}
+				String provincia = provinciaCombo.getValue();
+				if(provincia == null) {
+					provincia = "";
+				}
 				String calle = calleLabel.getValue();
+				if(calle == null) {
+					calle = "";
+				}
 				int numero = numeroLabel.getValue();
+				if(numero == 0) {
+					numero = 0;
+				}
 				int codigopostal = codigopostalLabel.getValue();
+				if(codigopostal == 0) {
+					codigopostal = 0;
+				}
 				String iban = ibanLabel.getValue();
-				String entidad = entidadLabel.getValue();
+				String entidad = "";
+				
+				if(iban.length() == 0) {
+					iban = "";
+					entidad = "";
+					System.out.println("vacio > IBAN len: " + iban.length() + "; IBAN: " + iban);
+				} 
+				if(iban.length() > 0){
+					iban = ibanLabel.getValue();
+					EntidadDAO entidadDao = new EntidadDAOImpl();
+					String codigo = iban.substring(4, 8);
+					entidad = entidadDao.mostrarEntidad(codigo).getNombre();
+					
+					System.out.println("relleno > IBAN len: " + iban.length() + "; IBAN: " + iban);
+				}
+				
+				//String entidad = entidadLabel.getValue();
+				
 				float cuantia = (float) cuantiaLabel.doubleValue();
 				float atraso = (float) atrasoLabel.doubleValue();				
 				
@@ -490,7 +541,8 @@ public class IndexController extends SelectorComposer<Component>{
 		dniLabel.setValue(p.getDni());
 		nombreLabel.setValue(p.getNombre());
 		apellidosLabel.setValue(p.getApellidos());
-		provinciaLabel.setValue(p.getProvincia());
+		//provinciaLabel.setValue(p.getProvincia());
+		provinciaCombo.setValue(p.getProvincia());
 		calleLabel.setValue(p.getCalle());
 		numeroLabel.setValue(p.getNumero());
 		codigopostalLabel.setValue(p.getCodigopostal());
@@ -538,4 +590,12 @@ public class IndexController extends SelectorComposer<Component>{
 	    
 	    System.out.println("?nombre=" + nombre);
 	}*/
+	
+	@Listen("onChange = #ibanLabel")
+	public void actualizarEntidad() {
+		String iban = ibanLabel.getValue();
+		String codigo = iban.substring(4, 8);
+		String ent = entidadDao.mostrarEntidad(codigo).getNombre();
+		entidadLabel.setValue(ent);
+	}
 }

@@ -1,23 +1,28 @@
 package com.springzk.pruebazk.controller;
 
-import java.util.HashMap;
+import java.util.List;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Doublebox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.ListModelList;
 
+import com.springzk.pruebazk.dao.EntidadDAO;
+import com.springzk.pruebazk.dao.EntidadDAOImpl;
 import com.springzk.pruebazk.dao.PrestacionesDAO;
 import com.springzk.pruebazk.dao.PrestacionesDAOImpl;
 import com.springzk.pruebazk.model.Prestaciones;
+import com.springzk.pruebazk.model.Provincia;
+import com.springzk.pruebazk.dao.ProvinciaDAO;
+import com.springzk.pruebazk.dao.ProvinciaDAOImpl;
 
 public class FormController extends SelectorComposer<Component>{
 
@@ -35,8 +40,11 @@ public class FormController extends SelectorComposer<Component>{
 	@Wire
 	Textbox apellidosTextbox;
 	
+	/*@Wire
+	Textbox provinciaTextbox;*/
+	
 	@Wire
-	Textbox provinciaTextbox;
+	Combobox provinciaCombo;
 	
 	@Wire
 	Textbox calleTextbox;
@@ -62,12 +70,19 @@ public class FormController extends SelectorComposer<Component>{
 	@Wire
 	Label labelNombre;
 	
+	@Wire
+	private List<Provincia> listadoProvincias;
+	
 	private PrestacionesDAO dao = new PrestacionesDAOImpl();
+	private EntidadDAO entidadDao = new EntidadDAOImpl();
+	private ProvinciaDAO provinciaDao = new ProvinciaDAOImpl();
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 	    
+		listadoProvincias = provinciaDao.listProvincia();
+		provinciaCombo.setModel(new ListModelList<Provincia>(listadoProvincias));
 		/* RECOGER INFO DE OTRO .ZUL
 		String nombre = (String) Sessions.getCurrent().getAttribute("nombrecito");
 		labelNombre.setValue(nombre);
@@ -84,7 +99,7 @@ public class FormController extends SelectorComposer<Component>{
 		
 		String apellidos = apellidosTextbox.getValue();
 		
-		String provincia = provinciaTextbox.getValue();
+		String provincia = provinciaCombo.getValue();
 		
 		String calle = calleTextbox.getValue();
 		
@@ -94,7 +109,7 @@ public class FormController extends SelectorComposer<Component>{
 		
 		String iban = ibanTextbox.getValue();
 		
-		String entidad = entidadTextbox.getValue();
+		//String entidad = entidadTextbox.getValue();
 		
 		float cuantia = (float) cuantiaDoublebox.doubleValue();
 		
@@ -122,7 +137,7 @@ public class FormController extends SelectorComposer<Component>{
 		
 		if(provincia.isEmpty() || (provincia == null)){ 
 			//alert("No puede haber campos vacíos.");
-			provinciaTextbox.setErrorMessage("Introduzca una provincia.");
+			provinciaCombo.setErrorMessage("Seleccione una provincia.");
 		}
 		
 		if(calle.isEmpty() || (calle == null)){ 
@@ -149,9 +164,9 @@ public class FormController extends SelectorComposer<Component>{
 			ibanTextbox.setErrorMessage("Introduzca los 24 carácteres (incluyendo las letras).");
 		}
 		
-		if(entidad == null || entidad.isEmpty()) {
+		/*if(entidad == null || entidad.isEmpty()) {
 			entidadTextbox.setErrorMessage("Introduzca una entidad.");
-		} 
+		} */
 		
 		if(cuantia < 0) {
 			cuantiaDoublebox.setErrorMessage("No se admiten valores negativos.");
@@ -163,13 +178,27 @@ public class FormController extends SelectorComposer<Component>{
 		
 		if((seguridadsocial != 0) && (dni.length() == 9) && (!nombre.isEmpty()) && (!apellidos.isEmpty())
 				&& (!provincia.isEmpty()) && (!calle.isEmpty()) && (numero > 0) && (sCodpostal.length() == 5)
-				&& (iban.length() == 24) && (!entidad.isEmpty())) {
+				&& (iban.length() == 24) /*&& (!entidad.isEmpty())*/) {
 			System.out.println("Registro insertado con d: " + dni + " ss: " + seguridadsocial);
+			
+			String entidad = "";
+			if(iban.length() != 0 && (iban.isEmpty())) {
+				String codigo = iban.substring(4, 8);
+				entidad = entidadDao.mostrarEntidad(codigo).getNombre();	
+			}
 			
 			Prestaciones p = new Prestaciones(seguridadsocial, dni, nombre, apellidos, provincia, calle, numero, codigopostal, iban, entidad, cuantia, atraso);
 			dao.insert(p);
 			
 			Executions.sendRedirect("/");
 		}
+	}
+	
+	@Listen("onChange = #ibanTextbox")
+	public void actualizarEntidad() {
+		String iban = ibanTextbox.getValue();
+		String codigo = iban.substring(4, 8);
+		String ent = entidadDao.mostrarEntidad(codigo).getNombre();
+		entidadTextbox.setValue(ent);
 	}
 }

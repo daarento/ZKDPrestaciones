@@ -151,7 +151,9 @@ public class FilesController extends SelectorComposer<Component>{
 	         }
 	         
 	         String home = System.getProperty("user.home") + File.separator + "Downloads" + File.separator ;
-	 		 String path = home + "prestaciones.xml";	
+	 		 String path = home + "prestaciones.xml";
+	 		 
+	 		 
 	 		 
 	         TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	         Transformer transformer = transformerFactory.newTransformer();
@@ -165,7 +167,7 @@ public class FilesController extends SelectorComposer<Component>{
 	         stmt.close();
 	         con.close();
 	         
-	         Clients.showNotification("Archivo descargado.", 
+	         Clients.showNotification("Archivo descargado en: " + path, 
 	        		 Notification.TYPE_INFO, downXmlButton, "after_start", 4000, true);
 	         // Abrir el fichero al descargarse
 	         /*File file = new File(path);
@@ -173,14 +175,35 @@ public class FilesController extends SelectorComposer<Component>{
 	         pb.start();*/
 	         
 	         File file = new File(path);
-	         try(InputStream is = new FileInputStream(file)){
+	         
+	         /*try(InputStream is = new FileInputStream(file)){
 	        	 AMedia media = new AMedia("prestaciones.xml", "xml", "application/xml", new FileInputStream(file));
 	        	 Filedownload.save(media); //selecciona donde guardar el archivo
 	         } catch (FileNotFoundException e) {
 	        	    e.printStackTrace();
 	         } catch (IOException e) {
 	             e.printStackTrace();
-	         }
+	         }*/
+	         
+	         if(!file.exists()) {
+	        	 String outputDir = "/output";
+	             File outputFolder = new File(outputDir);
+	             if (!outputFolder.exists()) {
+	                 outputFolder.mkdirs(); // create the folder if it doesn't exist
+	             }
+	             String pathaux = outputFolder.getAbsolutePath() + File.separator + "prestaciones.xml";
+	             File fileaux = new File(pathaux);
+	             
+	             try(InputStream is = new FileInputStream(fileaux)){
+		        	 AMedia mediaaux = new AMedia("prestaciones.xml", "xml", "application/xml", new FileInputStream(fileaux));
+		        	 Filedownload.save(mediaaux); //selecciona donde guardar el archivo
+		         } catch (FileNotFoundException e) {
+		        	    e.printStackTrace();
+		         } catch (IOException e) {
+		             e.printStackTrace();
+		         }
+	         } 
+	         
 	      } catch (Exception e) {
 	    	  System.out.println("Ha ocurrido un error al intentar descargar/abrir el archivo xml: " + e);
 	         e.printStackTrace();
