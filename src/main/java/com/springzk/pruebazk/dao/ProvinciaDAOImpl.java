@@ -44,7 +44,7 @@ public class ProvinciaDAOImpl implements ProvinciaDAO{
 
 	@Override
 	public List<Provincia> listProvincia() {
-		String sql = "SELECT nombre FROM provincia";
+		String sql = "SELECT nombre FROM provincia ORDER BY nombre ASC";
 		
 		RowMapper<Provincia> rowMapper = new RowMapper<Provincia>() {
 
